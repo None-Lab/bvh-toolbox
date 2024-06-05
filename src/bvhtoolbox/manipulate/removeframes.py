@@ -68,7 +68,7 @@ def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
         prog=__file__,
         description="""Delete range of frames from BVH files.""",
-        epilog="Use Unix-style path separators '/' or double backslash '\\\\' on Windows!\n",
+        epilog="Use Unix-style path separators '/' or float backslash '\\\\' on Windows!\n",
         formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("-v", "--ver", action='version', version='%(prog)s v{}'.format(get_pkg_version()))
     parser.add_argument("input.bvh", nargs='+', type=str, help="BVH files to remove frames from.")
