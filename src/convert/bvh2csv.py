@@ -20,12 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""" Convert animation data in BVH file to CSV format.
-Rotation data and position are separate output files.
-The first line is a header with each degree of freedom as a column.
-The first column is the frame for the data in that row.
-The second column is the time of the frame in seconds.
-The degrees of freedom in the joints are written in the order they appear in the BVH file as channels.
+""" BVH 파일의 애니메이션 데이터를 CSV 형식으로 변환합니다.
+회전 데이터와 위치는 별도의 출력 파일입니다.
+첫 번째 줄은 각 자유도를 열로 하는 헤더입니다.
+첫 번째 열은 해당 행의 데이터에 대한 프레임입니다.
+두 번째 열은 프레임의 시간(초)입니다.
+조인트의 자유도는 BVH 파일에서 채널로 표시되는 순서대로 작성됩니다.
 """
 
 import os
