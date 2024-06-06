@@ -27,6 +27,7 @@
 두 번째 열은 프레임의 시간(초)입니다.
 조인트의 자유도는 BVH 파일에서 채널로 표시되는 순서대로 작성됩니다.
 """
+from time import time
 
 import os
 
@@ -112,17 +113,22 @@ def write_joint_positions(bvh_tree, filepath, scale=1.0, end_sites=False):
             end = list(joint.filter('End'))
             if end:
                 get_world_positions(end[0])  # There can be only one End Site per joint.
+        
         for child in joint.filter('JOINT'):
             get_world_positions(child)
     
     get_world_positions(root)
     data = np.concatenate(data_list, axis=1)
+
     try:
         np.savetxt(filepath, data, header=','.join(header), fmt='%10.5f', delimiter=',', comments='')
+    
         return True
+
     except IOError as e:
-        print("ERROR({}): Could not write to file {}.\n"
-              "Make sure you have writing permissions.\n".format(e.errno, filepath))
+        print(f"""ERROR({e.errno}): Could not write to file {filepath}.\n
+                  Make sure you have writing permissions.\n""")
+    
         return False
 
 
@@ -141,11 +147,17 @@ def write_joint_hierarchy(bvh_tree, filepath, scale=1.0):
 
     data = list()
     for joint in bvh_tree.get_joints(end_sites=True):
+        
         joint_name = joint.name
+        
         parent_name = bvh_tree.joint_parent(joint_name).name if bvh_tree.joint_parent(joint_name) else ''
+
         row = [joint_name, parent_name]
+        
         row.extend((scale * offset for offset in bvh_tree.joint_offset(joint.name)))
+        
         data.append(tuple(row))
+
     data = np.array(data, dtype=[('joint', np.unicode_, 20),
                                  ('parent', np.unicode_, 20),
                                  ('offset.x', float),
@@ -165,7 +177,7 @@ def write_joint_hierarchy(bvh_tree, filepath, scale=1.0):
         return False
 
 
-def bvh2csv(bvh_path,
+def bvh2csv(bvh_path: str,
             dst_dirpath=None,
             scale=1.0,
             export_rotation=True,
@@ -175,8 +187,8 @@ def bvh2csv(bvh_path,
     """BVH 파일을 CSV 파일 형식으로 변환합니다.
     키워드 인수를 전달할 때는 키워드를 사용해야 합니다!
 
-    :param bvh_path: BVH 소스 파일 경로(들).
-    :type bvh_path: str|list
+    :param bvh_path: BVH 소스 파일 경로.
+    :type bvh_path: str
     :param dst_dirpath: 대상 CSV 파일의 폴더 경로.
     :type dst_dirpath: str
     :param scale: 루트 위치 및 오프셋 값에 대한 배율.
@@ -193,8 +205,14 @@ def bvh2csv(bvh_path,
     :rtype: bool
     """
     try:
+        startTime = time()
+        
         with open(bvh_path) as file_handle:
             mocap = BvhTree(file_handle.read())
+        
+        endTime = time()
+        print("file read: ", endTime - startTime, "s")
+
     except IOError as e:
         print("ERROR {}: Could not open file".format(e.errno), bvh_path)
         return False
@@ -203,19 +221,42 @@ def bvh2csv(bvh_path,
     pos_success = True
     rot_success = True
     hierarchy_success = True
+    
     if not dst_dirpath:
         dst_filepath = os.path.join(os.path.dirname(bvh_path), os.path.basename(bvh_path)[:-4])
+    
     else:
         # If the specified path doesn't yet exist, create it.
         if not os.path.exists(dst_dirpath):
             os.mkdir(dst_dirpath)
+    
         dst_filepath = os.path.join(dst_dirpath, os.path.basename(bvh_path)[:-4])
+    
+
     if export_position:
+        startTime = time()
+
         pos_success = write_joint_positions(mocap, dst_filepath + '_pos.csv', scale, end_sites)
+    
+        endTime = time()
+        print("positions: ", endTime - startTime, "s")
+
     if export_rotation:
+        startTime = time()
+
         rot_success = write_joint_rotations(mocap, dst_filepath + '_rot.csv')
+    
+        endTime = time()
+        print("rotations: ", endTime - startTime, "s")
+
     if export_hierarchy:
+        startTime = time()
+
         hierarchy_success = write_joint_hierarchy(mocap, dst_filepath + '_hierarchy.csv', scale)
+        
+        endTime = time()
+        print("hierarchy: ", endTime - startTime, "s")
+    
 
     n_succeeded = sum([pos_success, rot_success, hierarchy_success])
     return bool(n_succeeded)

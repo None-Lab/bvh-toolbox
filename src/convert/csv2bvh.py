@@ -415,8 +415,8 @@ def write_file(data, file_path):
         print("ERROR:", e)
         return False
     
-    
-def csv2bvh_file(hierarchy_file, position_file, rotation_file, destination_file=None, scale=1.0):
+
+def csv2bvh(hierarchy_file, position_file, rotation_file, destination_file=None, scale=1.0):
     """ Composes BVH file from CSV input files. If no destination path is given, CSV file path is used.
     
     :param hierarchy_file: CSV file path containing hierarchy. Columns: joint, parent, offset.x, offset.y, offset.z
