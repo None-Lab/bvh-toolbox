@@ -34,6 +34,8 @@ import os
 import numpy as np
 import transforms3d as t3d
 
+from multiprocessing import Pool
+
 from .. import BvhTree
 from .. import get_affines
 
@@ -48,6 +50,7 @@ def write_joint_rotations(bvh_tree, filepath):
     :return: 쓰기 프로세스가 성공했는지 여부.
     :rtype: bool
     """
+    startTime = time()
     
     time_col = np.arange(0, (bvh_tree.nframes - 0.5)*bvh_tree.frame_time, bvh_tree.frame_time)[:, None]
     data_list = [time_col]
@@ -58,6 +61,10 @@ def write_joint_rotations(bvh_tree, filepath):
         data_list.append(np.array(bvh_tree.frames_joint_channels(joint.name, channels)))
         
     data = np.concatenate(data_list, axis=1)
+
+    endTime = time()
+    print(f"rotations: {endTime - startTime}s")
+
     try:
         np.savetxt(filepath, data, header=','.join(header), fmt='%10.5f', delimiter=',', comments='')
         return True
@@ -81,7 +88,8 @@ def write_joint_positions(bvh_tree, filepath, scale=1.0, end_sites=False):
     :return: 쓰기 프로세스가 성공했는지 여부.
     :rtype: bool
     """
-    
+    startTime = time()
+
     time_col = np.arange(0, (bvh_tree.nframes - 0.5) * bvh_tree.frame_time, bvh_tree.frame_time)[:, None]
     data_list = [time_col]
     header = ['time']
@@ -120,6 +128,9 @@ def write_joint_positions(bvh_tree, filepath, scale=1.0, end_sites=False):
     get_world_positions(root)
     data = np.concatenate(data_list, axis=1)
 
+    endTime = time()
+    print(f"positions: {endTime - startTime}s")
+
     try:
         np.savetxt(filepath, data, header=','.join(header), fmt='%10.5f', delimiter=',', comments='')
     
@@ -144,6 +155,7 @@ def write_joint_hierarchy(bvh_tree, filepath, scale=1.0):
     :return: 쓰기 프로세스가 성공했는지 여부.
     :rtype: bool
     """
+    startTime = time()
 
     data = list()
     for joint in bvh_tree.get_joints(end_sites=True):
@@ -163,6 +175,10 @@ def write_joint_hierarchy(bvh_tree, filepath, scale=1.0):
                                  ('offset.x', float),
                                  ('offset.y', float),
                                  ('offset.z', float)])
+    
+    endTime = time()
+    print(f"hierarchy: {endTime - startTime}s")
+
     try:
         np.savetxt(filepath,
                    data,
@@ -183,7 +199,8 @@ def bvh2csv(bvh_path: str,
             export_rotation=True,
             export_position=True,
             export_hierarchy=True,
-            end_sites=True):
+            end_sites=True, 
+            CPU_count=3):
     """BVH 파일을 CSV 파일 형식으로 변환합니다.
     키워드 인수를 전달할 때는 키워드를 사용해야 합니다!
 
@@ -211,7 +228,7 @@ def bvh2csv(bvh_path: str,
             mocap = BvhTree(file_handle.read())
         
         endTime = time()
-        print("file read: ", endTime - startTime, "s")
+        print(f"file read: {endTime - startTime}s")
 
     except IOError as e:
         print("ERROR {}: Could not open file".format(e.errno), bvh_path)
@@ -233,30 +250,20 @@ def bvh2csv(bvh_path: str,
         dst_filepath = os.path.join(dst_dirpath, os.path.basename(bvh_path)[:-4])
     
 
+    Processing_CPU_count = int(CPU_count/3)
     if export_position:
-        startTime = time()
-
-        pos_success = write_joint_positions(mocap, dst_filepath + '_pos.csv', scale, end_sites)
-    
-        endTime = time()
-        print("positions: ", endTime - startTime, "s")
+        pos_processing = Pool(Processing_CPU_count).apply_async(write_joint_positions, (mocap, f'{dst_filepath}_pos.csv', scale, end_sites, ))
 
     if export_rotation:
-        startTime = time()
-
-        rot_success = write_joint_rotations(mocap, dst_filepath + '_rot.csv')
-    
-        endTime = time()
-        print("rotations: ", endTime - startTime, "s")
+        rot_processing = Pool(Processing_CPU_count).apply_async(write_joint_rotations, (mocap, f'{dst_filepath}_rot.csv', ))
 
     if export_hierarchy:
-        startTime = time()
-
-        hierarchy_success = write_joint_hierarchy(mocap, dst_filepath + '_hierarchy.csv', scale)
-        
-        endTime = time()
-        print("hierarchy: ", endTime - startTime, "s")
+        hierarchy_processing = Pool(Processing_CPU_count).apply_async(write_joint_hierarchy, (mocap, f'{dst_filepath}_hierarchy.csv', scale, ))
     
-
+    pos_success = pos_processing.get()
+    rot_success = rot_processing.get()
+    hierarchy_success = hierarchy_processing.get()
+    
+    
     n_succeeded = sum([pos_success, rot_success, hierarchy_success])
     return bool(n_succeeded)
