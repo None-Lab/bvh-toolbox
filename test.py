@@ -1,7 +1,10 @@
 from src.convert import bvh2csv
+from glob import glob
 
-files = ["./test/ex/PT_S104_1_FM_M_009.bvh", "./test/ex/PT_S104_1_FM_M_023.bvh"]
+files = sorted(glob("RAW_Motion_Data/*.bvh"))
 
 for file in files:
-    returnVal = bvh2csv(bvh_path=files[0], dst_dirpath="test/out/", CPU_count=15)
+    returnVal = bvh2csv(bvh_path=file, dst_dirpath="Processed_Motion_Data/", 
+                        export_rotation=False, export_position=True, export_hierarchy=False)
     print(returnVal)
+
