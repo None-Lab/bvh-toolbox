@@ -1,0 +1,59 @@
+HIERARCHY
+ROOT Hips
+{
+  OFFSET 0.0 0.0 0.0
+  CHANNELS 6 Xposition Yposition Zposition Xrotation Yrotation Zrotation
+  JOINT LeftHip
+  {
+    OFFSET 0.0 -0.12 0.0
+    CHANNELS 3 Xrotation Yrotation Zrotation
+    JOINT LeftKnee
+    {
+      OFFSET 0.0 -0.38 0.0
+      CHANNELS 3 Xrotation Yrotation Zrotation
+      JOINT LeftAnkle
+      {
+        OFFSET 0.0 -0.40 0.0
+        CHANNELS 3 Xrotation Yrotation Zrotation
+        JOINT LeftFoot
+        {
+          OFFSET 0.0 -0.05 0.0
+          CHANNELS 3 Xrotation Yrotation Zrotation
+        }
+      }
+    }
+  }
+  JOINT RightHip
+  {
+    OFFSET 0.0 -0.12 0.0
+    CHANNELS 3 Xrotation Yrotation Zrotation
+    JOINT RightKnee
+    {
+      OFFSET 0.0 -0.38 0.0
+      CHANNELS 3 Xrotation Yrotation Zrotation
+      JOINT RightAnkle
+      {
+        OFFSET 0.0 -0.40 0.0
+        CHANNELS 3 Xrotation Yrotation Zrotation
+        JOINT RightFoot
+        {
+          OFFSET 0.0 -0.05 0.0
+          CHANNELS 3 Xrotation Yrotation Zrotation
+        }
+      }
+    }
+  }
+}
+MOTION
+Frames: 10
+Frame Time: 0.0333333
+0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
